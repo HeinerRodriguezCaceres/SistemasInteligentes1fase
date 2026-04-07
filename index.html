@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Experto de Autos</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.container {
+    max-width: 450px;
+    width: 100%;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+label {
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+button {
+    width: 100%;
+    background: #007BFF;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.resultado {
+    margin-top: 20px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🚗 Sistema Experto de Recomendación de Autos</h1>
+
+<div class="container">
+
+<label for="presupuesto">Presupuesto:</label>
+<input type="number" id="presupuesto" placeholder="Ej: 25000" title="Ingrese su presupuesto">
+
+<label for="motor">Motor:</label>
+<select id="motor" title="Seleccione tipo de motor">
+    <option value="combustion">Combustión</option>
+    <option value="electrico">Eléctrico</option>
+</select>
+
+<label for="transmision">Transmisión:</label>
+<select id="transmision" title="Seleccione tipo de transmisión">
+    <option value="automatico">Automático</option>
+    <option value="manual">Manual</option>
+</select>
+
+<label for="tipo">Tipo de vehículo:</label>
+<select id="tipo" title="Seleccione tipo de vehículo">
+    <option value="sedan">Sedan</option>
+    <option value="suv">SUV</option>
+    <option value="pickup">Pickup</option>
+    <option value="hatchback">Hatchback</option>
+</select>
+
+<button onclick="recomendar()">Recomendar Auto</button>
+
+<div class="resultado" id="resultado" role="status"></div>
+
+</div>
+
+<script>
+
+
+
+const autos = [
+
+{nombre:"Toyota Corolla", tipo:"sedan", motor:"combustion", transmision:"automatico", precio:20000, descuento:false},
+{nombre:"Honda Civic", tipo:"sedan", motor:"combustion", transmision:"manual", precio:21000, descuento:true},
+{nombre:"Hyundai Elantra", tipo:"sedan", motor:"combustion", transmision:"automatico", precio:19000, descuento:true},
+{nombre:"Kia Rio", tipo:"sedan", motor:"combustion", transmision:"manual", precio:17000, descuento:false},
+{nombre:"Nissan Sentra", tipo:"sedan", motor:"combustion", transmision:"automatico", precio:19500, descuento:true},
+
+{nombre:"Toyota RAV4", tipo:"suv", motor:"combustion", transmision:"automatico", precio:28000, descuento:false},
+{nombre:"Honda CR-V", tipo:"suv", motor:"combustion", transmision:"automatico", precio:30000, descuento:true},
+{nombre:"Hyundai Tucson", tipo:"suv", motor:"combustion", transmision:"automatico", precio:27000, descuento:true},
+{nombre:"Kia Sportage", tipo:"suv", motor:"combustion", transmision:"automatico", precio:26000, descuento:false},
+{nombre:"Nissan X-Trail", tipo:"suv", motor:"combustion", transmision:"automatico", precio:29000, descuento:true},
+
+{nombre:"Toyota Hilux", tipo:"pickup", motor:"combustion", transmision:"manual", precio:35000, descuento:false},
+{nombre:"Ford Ranger", tipo:"pickup", motor:"combustion", transmision:"automatico", precio:37000, descuento:true},
+{nombre:"Chevrolet Colorado", tipo:"pickup", motor:"combustion", transmision:"automatico", precio:36000, descuento:false},
+{nombre:"Nissan Frontier", tipo:"pickup", motor:"combustion", transmision:"manual", precio:34000, descuento:true},
+
+{nombre:"Tesla Model 3", tipo:"sedan", motor:"electrico", transmision:"automatico", precio:45000, descuento:true},
+{nombre:"Nissan Leaf", tipo:"hatchback", motor:"electrico", transmision:"automatico", precio:30000, descuento:true},
+{nombre:"BMW i3", tipo:"hatchback", motor:"electrico", transmision:"automatico", precio:42000, descuento:false},
+{nombre:"Audi Q4 e-tron", tipo:"suv", motor:"electrico", transmision:"automatico", precio:50000, descuento:true},
+
+{nombre:"Volkswagen Golf", tipo:"hatchback", motor:"combustion", transmision:"manual", precio:23000, descuento:false},
+{nombre:"Mazda CX-5", tipo:"suv", motor:"combustion", transmision:"automatico", precio:31000, descuento:true}
+
+];
+
+
+function recomendar(){
+
+    let presupuesto = parseInt(document.getElementById("presupuesto").value);
+    let motor = document.getElementById("motor").value;
+    let transmision = document.getElementById("transmision").value;
+    let tipo = document.getElementById("tipo").value;
+
+    let resultadoDiv = document.getElementById("resultado");
+
+    if(isNaN(presupuesto) || presupuesto <= 0){
+        resultadoDiv.innerHTML = "⚠️ Ingrese un presupuesto válido.";
+        return;
+    }
+
+    let recomendados = autos.filter(a =>
+        a.precio <= presupuesto &&
+        a.motor === motor &&
+        a.transmision === transmision &&
+        a.tipo === tipo
+    );
+
+    if(recomendados.length > 0){
+
+        let html = "<b>Autos recomendados:</b><br><br>";
+
+        recomendados.forEach(a => {
+            html += `
+                <b>${a.nombre}</b><br>
+                Precio: $${a.precio}<br>
+                Motor: ${a.motor}<br>
+                Transmisión: ${a.transmision}<br>
+                Tipo: ${a.tipo}<br>
+                Descuento: ${a.descuento ? "Sí 🔥" : "No"}<br>
+                <hr>
+            `;
+        });
+
+        resultadoDiv.innerHTML = html;
+
+    } else {
+        resultadoDiv.innerHTML = "❌ No se encontraron autos con esas características.";
+    }
+}
+
+</script>
+
+</body>
+</html>
